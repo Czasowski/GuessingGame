@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private Button btnGuess;
     private TextView lblOutput;
     private int theNumber;
+    private int range = 100;
+    private TextView lblRange;
     private int numberOfTries = 0;
     int numLeft1;
     String toastMessage;
@@ -116,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog aboutDialog = new AlertDialog.Builder(MainActivity.this).create();
             aboutDialog.setTitle("About Guessing Game");
             aboutDialog.setMessage("(c)2019 Czasowski <3 Kicu");
-            aboutDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+            aboutDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
@@ -127,6 +129,5 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
     }
-
     }
 }
