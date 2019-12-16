@@ -1,11 +1,19 @@
 package com.example.guessinggame;
 
+import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toolbar;
@@ -90,5 +98,35 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+    public boolean onCreateOptionsMenu (Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+        case R.id.action_settings:
+            return true;
+        case R.id.action_newgame:
+            return true;
+        case R.id.action_gamestats:
+            return true;
+        case R.id.action_about:
+            AlertDialog aboutDialog = new AlertDialog.Builder(MainActivity.this).create();
+            aboutDialog.setTitle("About Guessing Game");
+            aboutDialog.setMessage("(c)2019 Czasowski <3 Kicu");
+            aboutDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            aboutDialog.show();
+            return true;
+            default:
+                return super.onOptionsItemSelected(item);
+    }
+
     }
 }
