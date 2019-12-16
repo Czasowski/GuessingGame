@@ -1,6 +1,5 @@
 package com.example.guessinggame;
 
-import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity {
     private EditText txtGuess;
@@ -16,43 +16,56 @@ public class MainActivity extends AppCompatActivity {
     private TextView lblOutput;
     private int theNumber;
     private int numberOfTries = 0;
-    final private int numLeft = 10;
     int numLeft1;
+    String toastMessage;
+
 
     private void checkGuess() {
+        numberOfTries++;
+        numLeft1 = 10 - numberOfTries;
         String guessText = txtGuess.getText().toString();
         String message = "";
-        try {
-            while (numberOfTries <= 10) {
+            try {
                 int guess = Integer.parseInt(guessText);
+                if (guess >= 100 || guess <= 0) {
+                    Exception e = new Exception();
+                    throw e;
+                }
                 if (guess < theNumber) {
-                    numberOfTries++;
-                    numLeft1 = numLeft - numberOfTries;
-                    message = guess + " is too low. Try again. \n Left: " + numLeft1;
-
+                    message = guess + " is too low. Try again.";
+                    toastMessage = "Left: " + numLeft1;
+                    Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
                 } else if (guess > theNumber) {
                     numberOfTries++;
-                    int numLeft1 = numLeft - numberOfTries;
-                    message = guess + " is too low. Try again. \n Left: " + numLeft1;
+                    message = guess + " is too height. Try again.";
+                    toastMessage = "Left: " + numLeft1;
+                    Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
                 } else {
                     message = guess + " is correct. You win!";
                     Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                     newGame();
                 }
-            }
-            } catch(Exception e){
+            } catch (Exception e) {
                 message = "Enter a whole number between 1 and 100.";
-            } finally{
+            } finally {
+                if (numLeft1 == 0) {
+                    newGame();
+                }
                 lblOutput.setText(message);
                 txtGuess.requestFocus();
                 txtGuess.selectAll();
             }
-        newGame();
         }
+
+
+
 
 
     public void newGame() {
         theNumber = (int) (Math.random()*100 + 1);
+        numberOfTries = 0;
+        toastMessage = "NEW GAME!";
+        Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
     }
 
 
