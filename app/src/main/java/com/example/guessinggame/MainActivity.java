@@ -1,6 +1,5 @@
 package com.example.guessinggame;
-
-import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -11,16 +10,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Toolbar;
+
 
 public class MainActivity extends AppCompatActivity {
-    private EditText txtGuess;
     private Button btnGuess;
+    private EditText txtGuess;
     private TextView lblOutput;
     private int theNumber;
     private int range = 100;
@@ -37,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         String message = "";
             try {
                 int guess = Integer.parseInt(guessText);
-                if (guess >= 100 || guess <= 0) {
+                if (guess >= range || guess <= 0) {
                     Exception e = new Exception();
                     throw e;
                 }
@@ -46,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
                     toastMessage = "Left: " + numLeft1;
                     Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
                 } else if (guess > theNumber) {
-                    numberOfTries++;
                     message = guess + " is too height. Try again.";
                     toastMessage = "Left: " + numLeft1;
                     Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
@@ -56,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                     newGame();
                 }
             } catch (Exception e) {
-                message = "Enter a whole number between 1 and 100.";
+                message = "Enter a whole number between 1 and " + range + ":";
             } finally {
                 if (numLeft1 == 0) {
                     newGame();
@@ -72,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void newGame() {
-        theNumber = (int) (Math.random()*100 + 1);
+        theNumber = (int) (Math.random()* range + 1);
+        //lblRange.setText("Enter a number between 1 and " + range + ":");
         numberOfTries = 0;
         toastMessage = "NEW GAME!";
         Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
@@ -100,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        lblRange = (TextView) findViewById(R.id.lblRange);
     }
     public boolean onCreateOptionsMenu (Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -109,6 +107,34 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
         case R.id.action_settings:
+            final CharSequence[] items = {"Easy", "Medium", "Hard"};
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Select the Range:");
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
+                    switch (item) {
+                        case 0:
+                            range = 10;
+                            newGame();
+                            lblRange.setText("Enter a number between 1 and " + range + ":");
+                            break;
+                        case 1:
+                            range = 100;
+                            newGame();
+                            lblRange.setText("Enter a number between 1 and " + range + ":");
+                            break;
+                        case 2:
+                            range = 1000;
+                            newGame();
+                            lblRange.setText("Enter a number between 1 and " + range + ":");
+                            break;
+                    }
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
             return true;
         case R.id.action_newgame:
             return true;
