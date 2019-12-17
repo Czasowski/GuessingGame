@@ -1,6 +1,9 @@
 package com.example.guessinggame;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,11 +28,27 @@ public class MainActivity extends AppCompatActivity {
     private int numberOfTries = 0;
     int numLeft1;
     String toastMessage;
+    private int numOfTries;
+
+    public int setNumOfTries(int rang) {
+        switch (rang) {
+            case 10:
+                numOfTries = 5;
+                break;
+            case 100:
+                numOfTries = 10;
+                break;
+            case 1000:
+                numOfTries = 15;
+                break;
+        }
+        return numOfTries;
+    }
 
 
     private void checkGuess() {
         numberOfTries++;
-        numLeft1 = 10 - numberOfTries;
+        numLeft1 = numOfTries - numberOfTries;
         String guessText = txtGuess.getText().toString();
         String message = "";
             try {
@@ -69,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void newGame() {
         theNumber = (int) (Math.random()* range + 1);
-        //lblRange.setText("Enter a number between 1 and " + range + ":");
+        setNumOfTries(range);
         numberOfTries = 0;
         toastMessage = "NEW GAME!";
         Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
@@ -98,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         lblRange = (TextView) findViewById(R.id.lblRange);
+        newGame();
     }
     public boolean onCreateOptionsMenu (Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -137,8 +157,7 @@ public class MainActivity extends AppCompatActivity {
             alert.show();
             return true;
         case R.id.action_newgame:
-            return true;
-        case R.id.action_gamestats:
+            newGame();
             return true;
         case R.id.action_about:
             AlertDialog aboutDialog = new AlertDialog.Builder(MainActivity.this).create();

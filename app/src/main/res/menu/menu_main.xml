@@ -7,9 +7,6 @@
         android:id="@+id/action_newgame"
         android:title="New Game" />
     <item
-        android:id="@+id/action_gamestats"
-        android:title="Game Stats" />
-    <item
         android:id="@+id/action_about"
         android:title="About" />
 
