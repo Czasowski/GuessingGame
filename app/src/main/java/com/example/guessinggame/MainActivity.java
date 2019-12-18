@@ -1,29 +1,26 @@
 package com.example.guessinggame;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.preference.PreferenceManager;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.os.Bundle;
+import android.view.*;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
 
 
 public class MainActivity extends AppCompatActivity {
+    private static final String MY_PREF = "MyPrefsFile";
+    SharedPreferences pref;
+    private int range = 100;
     private Button btnGuess;
     private EditText txtGuess;
     private TextView lblOutput;
     private int theNumber;
-    private int range = 100;
     private TextView lblRange;
     private int numberOfTries = 0;
     int numLeft1;
@@ -91,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         setNumOfTries(range);
         numberOfTries = 0;
         toastMessage = "NEW GAME!";
-        Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -99,10 +96,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         txtGuess = findViewById(R.id.txtGuess);
         lblOutput = findViewById(R.id.lblOutput);
         btnGuess = findViewById(R.id.btnGuess);
-        newGame();
         btnGuess.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         lblRange = (TextView) findViewById(R.id.lblRange);
+        pref = getSharedPreferences(MY_PREF, Context.MODE_PRIVATE);
         newGame();
     }
     public boolean onCreateOptionsMenu (Menu menu) {
@@ -136,16 +134,19 @@ public class MainActivity extends AppCompatActivity {
                     switch (item) {
                         case 0:
                             range = 10;
+                            storeRange(range);
                             newGame();
                             lblRange.setText("Enter a number between 1 and " + range + ":");
                             break;
                         case 1:
                             range = 100;
+                            storeRange(range);
                             newGame();
                             lblRange.setText("Enter a number between 1 and " + range + ":");
                             break;
                         case 2:
                             range = 1000;
+                            storeRange(range);
                             newGame();
                             lblRange.setText("Enter a number between 1 and " + range + ":");
                             break;
@@ -158,6 +159,9 @@ public class MainActivity extends AppCompatActivity {
             return true;
         case R.id.action_newgame:
             newGame();
+            return true;
+        case R.id.action_gamestat:
+
             return true;
         case R.id.action_about:
             AlertDialog aboutDialog = new AlertDialog.Builder(MainActivity.this).create();
@@ -174,5 +178,11 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
     }
+    }
+    public void storeRange (int newRange) {
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("range", newRange);
+        editor.commit();
+        Toast.makeText(MainActivity.this,"Good", Toast.LENGTH_SHORT).show();
     }
 }
