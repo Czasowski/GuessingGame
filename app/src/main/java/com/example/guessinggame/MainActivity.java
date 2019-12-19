@@ -1,6 +1,5 @@
 package com.example.guessinggame;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,18 +13,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 public class MainActivity extends AppCompatActivity {
-    private static final String MY_PREF = "MyPrefsFile";
     SharedPreferences pref;
-    private int range = 100;
+    private int range;
     private Button btnGuess;
     private EditText txtGuess;
     private TextView lblOutput;
     private int theNumber;
     private TextView lblRange;
     private int numberOfTries = 0;
-    int numLeft1;
+    private int numLeft1;
     String toastMessage;
     private int numOfTries;
+    final String RANGE = "range";
+    private int gamesWon;
+    private int lostGames;
 
     public int setNumOfTries(int rang) {
         switch (rang) {
@@ -63,7 +64,12 @@ public class MainActivity extends AppCompatActivity {
                     toastMessage = "Left: " + numLeft1;
                     Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
                 } else {
-                    message = guess + " is correct. You win!";
+                    message = guess + " is correct. You win! \n You could start a new game!";
+                    pref = getPreferences(MODE_PRIVATE);
+                    SharedPreferences.Editor ed = pref.edit();
+                    gamesWon = pref.getInt("GamesWin",0) + 1;
+                    ed.putInt("GamesWin",gamesWon);
+                    ed.apply();
                     Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                     newGame();
                 }
@@ -72,6 +78,11 @@ public class MainActivity extends AppCompatActivity {
             } finally {
                 if (numLeft1 == 0) {
                     newGame();
+                    pref = getPreferences(MODE_PRIVATE);
+                    SharedPreferences.Editor ed = pref.edit();
+                    lostGames = pref.getInt("Lost",0) + 1;
+                    ed.putInt("Lost",lostGames);
+                    ed.apply();
                 }
                 lblOutput.setText(message);
                 txtGuess.requestFocus();
@@ -84,11 +95,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void newGame() {
+        lblOutput.setText("Enter a number, then click Guess");
+        txtGuess.setText("");
+        lblRange.setText("Enter a number between 1 and " + range + ":");
         theNumber = (int) (Math.random()* range + 1);
         setNumOfTries(range);
         numberOfTries = 0;
         toastMessage = "NEW GAME!";
-        //Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -113,8 +127,11 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        lblRange = (TextView) findViewById(R.id.lblRange);
-        pref = getSharedPreferences(MY_PREF, Context.MODE_PRIVATE);
+        lblRange = findViewById(R.id.lblRange);
+        pref = getPreferences(MODE_PRIVATE);
+        range = pref.getInt(RANGE, 100);
+        gamesWon = pref.getInt("GamesWin", 0);
+        lostGames = pref.getInt("Lost",0);
         newGame();
     }
     public boolean onCreateOptionsMenu (Menu menu) {
@@ -136,19 +153,16 @@ public class MainActivity extends AppCompatActivity {
                             range = 10;
                             storeRange(range);
                             newGame();
-                            lblRange.setText("Enter a number between 1 and " + range + ":");
                             break;
                         case 1:
                             range = 100;
                             storeRange(range);
                             newGame();
-                            lblRange.setText("Enter a number between 1 and " + range + ":");
                             break;
                         case 2:
                             range = 1000;
                             storeRange(range);
                             newGame();
-                            lblRange.setText("Enter a number between 1 and " + range + ":");
                             break;
                     }
                     dialog.dismiss();
@@ -161,7 +175,16 @@ public class MainActivity extends AppCompatActivity {
             newGame();
             return true;
         case R.id.action_gamestat:
-
+            AlertDialog statDialog = new AlertDialog.Builder(MainActivity.this).create();
+            statDialog.setTitle("Your game statistic:");
+            statDialog.setMessage("Win: " + gamesWon + "\n" + "Looses: " + lostGames);
+            statDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            statDialog.show();
             return true;
         case R.id.action_about:
             AlertDialog aboutDialog = new AlertDialog.Builder(MainActivity.this).create();
@@ -179,10 +202,11 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
     }
     }
-    public void storeRange (int newRange) {
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("range", newRange);
-        editor.commit();
-        Toast.makeText(MainActivity.this,"Good", Toast.LENGTH_SHORT).show();
+    private void storeRange (int newRange) {
+        pref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor ed = pref.edit();
+        ed.putInt(RANGE, newRange);
+        ed.apply();
+        Toast.makeText(MainActivity.this, "good", Toast.LENGTH_SHORT).show();
     }
 }
